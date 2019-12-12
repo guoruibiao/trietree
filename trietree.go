@@ -5,7 +5,7 @@ import (
 	"os"
 	"io/ioutil"
 	"sync"
-)
+	)
 // 参考链接
 // https://www.cnblogs.com/sunlong88/p/11980046.html
 
@@ -56,6 +56,7 @@ func (p *TrieTree) BuildTrieTreeFromFile(filepath, separator string) (err error)
 	if len(words) >= 1 {
 		for _, word := range words {
 			// 排除尾行空串的影响，不过对发言内容来说，空内容其实是不合法的
+			word = strings.TrimSpace(word)
 			if word != "" {
 				p.AddWord(word, nil)
 			}
