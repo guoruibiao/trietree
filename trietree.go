@@ -37,6 +37,7 @@ func NewTrie() *TrieTree {
 	return &TrieTree{
 		root:newNode(),
 		lock:new(sync.RWMutex),
+		statistic:make(map[string]int),
 	}
 }
 
@@ -108,6 +109,9 @@ func (p *TrieTree) WordExists(key string) (exists bool) {
 
 		node = ret
 	}
+	
+	// 统计
+	p.incrWordFreq(key)
 	return true
 }
 
@@ -155,6 +159,9 @@ func (p *TrieTree)Filter(text, replace string) (result string, hit bool) {
 
 		// start 到 index+1 部分刚好为遍历过程走过的长度，用于替换即可
 		if node.term == true {
+			// 走一遍统计
+			p.incrWordFreq(string(chars[start:index+1]))
+			
 			left = append(left, []rune(replace)...)
 			hit = true
 			node = p.root

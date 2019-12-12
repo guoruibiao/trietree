@@ -58,6 +58,11 @@ func exists(writer http.ResponseWriter, request *http.Request) {
     }
 }
 
+func statistic(writer http.ResponseWriter, request *http.Request) {
+    statistic := tree.ExportStatistic()
+    fmt.Fprintln(writer, statistic)
+}
+
 func reload(writer http.ResponseWriter, request *http.Request) {
     filepath := request.URL.Query().Get("filepath")
     separator := request.URL.Query().Get("separator")
@@ -99,10 +104,11 @@ func main() {
 
     fmt.Println("start listening at `http://localhost:" + *port + "/` ...")
     http.HandleFunc("/filter", filter)
-    http.HandleFunc("/addword", addword)
+    http.HandleFunc("/add", addword)
     http.HandleFunc("/exists", exists)
     http.HandleFunc("/", index)
     http.HandleFunc("/reload", reload)
+    http.HandleFunc("/statistic", statistic)
     err := http.ListenAndServe(":" + *port, nil)
     if err != nil {
         log.Fatal("ListenAndServe: ", err)
