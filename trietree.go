@@ -16,13 +16,15 @@ type trieNode struct {
 	Depth int
 	childs map[rune]*trieNode
 	term bool
-	// TODO 考虑加上hooks 一旦filter方法被触发，就做一些统计之类的事
+	// TODO 考虑加上hooks 可以在某些情况下做一些回调处理
 }
 
 type TrieTree struct {
 	root *trieNode
 	size int
 	lock *sync.RWMutex
+	// 做一些统计之类的事
+	statistic map[string]int
 }
 
 func newNode() *trieNode {
@@ -107,6 +109,25 @@ func (p *TrieTree) WordExists(key string) (exists bool) {
 		node = ret
 	}
 	return true
+}
+
+// 内部统计方法调用
+func (p *TrieTree) incrWordFreq(key string) int {
+	p.lock.Lock()
+	defer p.lock.Unlock()
+	
+	old, ok := p.statistic[key]
+	if !ok {
+		p.statistic[key] = 1
+		return 1
+	}
+	
+	p.statistic[key] = p.statistic[key] + 1
+	return old + 1
+}
+
+func (p *TrieTree) ExportStatistic() map[string]int {
+	return p.statistic
 }
 
 func (p *TrieTree)Filter(text, replace string) (result string, hit bool) {
