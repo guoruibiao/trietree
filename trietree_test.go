@@ -24,6 +24,16 @@ func TestTrieTrie_BuildFromFile(t *testing.T) {
 	t.Log(trietree.root.childs)
 }
 
+func TestTrieTree_BuildTrieTreeFromURL(t *testing.T) {
+	url := "http://xxx.yyy/zzz"
+	err := trietree.BuildTrieTreeFromURL(url, "\n")
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log(trietree.root.childs)
+	exists := trietree.WordExists("加Q")
+	t.Log(exists)
+}
 
 func TestTrieTree_WordExists(t *testing.T) {
 	testcases := []string{"傻瓜", "你好", "早上好"}

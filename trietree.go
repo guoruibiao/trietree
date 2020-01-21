@@ -5,6 +5,8 @@ import (
 	"os"
 	"io/ioutil"
 	"sync"
+	"github.com/pkg/errors"
+	"github.com/guoruibiao/gorequests"
 	)
 // 参考链接
 // https://www.cnblogs.com/sunlong88/p/11980046.html
@@ -66,6 +68,34 @@ func (p *TrieTree) BuildTrieTreeFromFile(filepath, separator string) (err error)
 		}
 	}
 
+	return
+}
+
+func (p *TrieTree) BuildTrieTreeFromURL(url, separator string) (err error){
+	if !strings.HasPrefix(url, "http") {
+		return errors.New("URL invalid")
+	}
+	
+	response, err := gorequests.NewRequest("GET", url).DoRequest()
+	if err != nil {
+		return
+	}
+	
+	content, err := response.Content()
+	if err != nil {
+		return
+	}
+	
+	words := strings.Split(content, separator)
+	if len(words) <= 0 {
+		return errors.New("empty web content.")
+	}
+	
+	for _, word := range words {
+		if word != "" {
+			p.AddWord(word, nil)
+		}
+	}
 	return
 }
 
